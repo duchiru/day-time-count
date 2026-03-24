@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "daytimecount",
+  "version": "${version}",
+  "name": "Day Time Count",
+  "description": "This utility mod adds a simple counter to the top-left corner, helping players track the current day and time.",
+  "authors": [
+    "Nguyen The Viet <https://github.com/duchiru>"
+  ],
+  "contact": {
+    "sources": "https://github.com/duchiru/day-time-count"
+  },
+  "license": "GPLv3",
+  "icon": "assets/daytimecount/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.duchiru.daytimecount.DayTimeCount"
+    ],
+    "client": [
+      "me.duchiru.daytimecount.DayTimeCountClient"
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.21.11",
+    "java": ">=21"
+  }
+}
