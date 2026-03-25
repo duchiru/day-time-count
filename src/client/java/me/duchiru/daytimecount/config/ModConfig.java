@@ -52,7 +52,6 @@ public class ModConfig {
             INSTANCE = GSON.fromJson(reader, ModConfig.class);
         } catch (IOException exception) {
             DayTimeCount.LOGGER.error("Failed to load config from {}", configFile, exception);
-            return;
         }
 
         if (INSTANCE == null) {
