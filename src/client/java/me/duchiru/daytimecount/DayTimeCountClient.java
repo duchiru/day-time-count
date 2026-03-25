@@ -1,5 +1,6 @@
 package me.duchiru.daytimecount;
 
+import me.duchiru.daytimecount.config.ModConfig;
 import me.duchiru.daytimecount.events.NewDayCallback;
 import me.duchiru.daytimecount.events.NewDayInvoker;
 import me.duchiru.daytimecount.hud.DayTimeTracker;
@@ -17,6 +18,7 @@ public class DayTimeCountClient implements ClientModInitializer {
         NewDayCallback.EVENT.register(new Milestones());
 
         NewDayInvoker.init();
+        ModConfig.load();
 
         DayTimeCount.LOGGER.info("Initialized client-side!");
     }
