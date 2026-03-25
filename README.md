@@ -14,6 +14,12 @@
 
 ---
 
+## Requirements
+
+* Fabric API 0.135.1 or higher
+
+---
+
 ## Preview
 
 ![main feature preview](https://cdn.modrinth.com/data/KapwD8fJ/images/60d5db51e31d029a06c139ad33c23bc0cdf5fbc8.png)
