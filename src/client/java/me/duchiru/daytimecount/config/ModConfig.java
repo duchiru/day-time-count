@@ -19,6 +19,8 @@ public class ModConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static ModConfig INSTANCE;
 
+    @SerializedName("tracker_style")
+    public TrackerStyle trackerStyle = TrackerStyle.DEFAULT;
     @SerializedName("tracker_position")
     public TrackerPosition trackerPosition = TrackerPosition.TOP_LEFT;
 

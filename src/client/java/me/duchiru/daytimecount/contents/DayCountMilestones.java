@@ -1,4 +1,4 @@
-package me.duchiru.daytimecount;
+package me.duchiru.daytimecount.contents;
 
 import me.duchiru.daytimecount.events.NewDayCallback;
 import net.minecraft.client.MinecraftClient;
@@ -6,7 +6,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class Milestones implements NewDayCallback {
+public class DayCountMilestones implements NewDayCallback {
     @Override
     public void onNewDay(MinecraftClient client, long days) {
         if (client.player == null) return;
