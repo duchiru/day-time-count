@@ -17,7 +17,7 @@ public class HudDayTimeTracker implements HudElement {
     private static final int PADDING_Y = 4;
     private static final int LINE_HEIGHT = 9;
     private static final int GAP = 2;
-    private static final int HOTBAR_HEIGHT = 40;
+    private static final int HOTBAR_HEIGHT = 46;
 
     @Override
     public void render(@NonNull DrawContext context, @NonNull RenderTickCounter tickCounter) {
