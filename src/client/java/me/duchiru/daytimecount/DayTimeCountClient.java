@@ -2,9 +2,9 @@ package me.duchiru.daytimecount;
 
 import me.duchiru.daytimecount.config.ModConfig;
 import me.duchiru.daytimecount.contents.DayCountMilestones;
+import me.duchiru.daytimecount.contents.HudDayTimeTracker;
 import me.duchiru.daytimecount.events.NewDayCallback;
 import me.duchiru.daytimecount.events.NewDayInvoker;
-import me.duchiru.daytimecount.contents.HudDayTimeTracker;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;

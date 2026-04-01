@@ -11,8 +11,6 @@ import net.minecraft.client.render.RenderTickCounter;
 import org.jspecify.annotations.NonNull;
 
 public class HudDayTimeTracker implements HudElement {
-    private record RenderPosition(int x, int y) {}
-
     private static final int PADDING_X = 4;
     private static final int PADDING_Y = 4;
     private static final int LINE_HEIGHT = 9;
@@ -91,5 +89,8 @@ public class HudDayTimeTracker implements HudElement {
             case BOTTOM_RIGHT -> new RenderPosition(rightAlignedX, bottomAlignedY);
             case HOTBAR -> new RenderPosition(centeredX, hotbarY);
         };
+    }
+
+    private record RenderPosition(int x, int y) {
     }
 }

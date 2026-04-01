@@ -1,6 +1,7 @@
 # Day Time Counter
 
-**Day Time Counter** is a lightweight utility mod that adds a clean, minimal display to the top-left corner of your screen, showing the current **day** and **in-game time**.
+**Day Time Counter** is a lightweight utility mod that adds a clean, minimal display to the top-left corner of your
+screen, showing the current **day** and **in-game time**.
 
 ---
 
@@ -10,7 +11,8 @@
   Instantly see the current in-game day and time.
 
 * **Milestone Celebrations**:
-  When you reach survival milestones (10, 50, 100 and so on), there will be a "cheer" screen title and a celebratory sound effect to mark your progress.
+  When you reach survival milestones (10, 50, 100 and so on), there will be a "cheer" screen title and a celebratory
+  sound effect to mark your progress.
 
 * **Fully Customizable**:
   Adjust the display's position, font size, and color to fit your preferences.
