@@ -25,6 +25,28 @@ screen, showing the current **day** and **in-game time**.
 
 ---
 
+## Configuration
+
+The mod's configuration file is located at `config/daytimecounter.json`.
+
+```json
+{
+  "tracker_style": "default (default | compact | day_only | time_only)",
+  "tracker_position": "top-left (top-left | top-right | bottom-left | bottom-right | hotbar)",
+  "milestones": {
+    "100": {
+      "title": "Wow, 100-Day Challenge!",
+      "subtitle": "It\u0027s time to show off your world!",
+      "title_color": "AQUA",
+      "subtitle_color": "GREEN",
+      "sound": "ui.toast.challenge_complete"
+    }
+  }
+}
+```
+
+---
+
 ## Preview
 
 ![main feature preview](https://cdn.modrinth.com/data/KapwD8fJ/images/60d5db51e31d029a06c139ad33c23bc0cdf5fbc8.png)
