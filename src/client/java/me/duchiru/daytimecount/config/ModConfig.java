@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ModConfig {
     private static final String CONFIG_FILE_NAME = String.format("%s.json", DayTimeCount.MOD_ID);
@@ -20,9 +22,27 @@ public class ModConfig {
     private static ModConfig INSTANCE;
 
     @SerializedName("tracker_style")
-    public TrackerStyle trackerStyle = TrackerStyle.DEFAULT;
+    public TrackerStyle trackerStyle;
     @SerializedName("tracker_position")
-    public TrackerPosition trackerPosition = TrackerPosition.TOP_LEFT;
+    public TrackerPosition trackerPosition;
+    @SerializedName("milestones")
+    public Map<Long, Milestone> milestones;
+
+    private static ModConfig getDefault() {
+        ModConfig defaultConfig = new ModConfig();
+
+        defaultConfig.trackerStyle = TrackerStyle.DEFAULT;
+        defaultConfig.trackerPosition = TrackerPosition.TOP_RIGHT;
+        defaultConfig.milestones = new TreeMap<>();
+
+        defaultConfig.milestones.put(1L, new Milestone("Welcome to Minecraft!", "Happy mining!", "RED", "WHITE", "entity.experience_orb.pickup"));
+        defaultConfig.milestones.put(7L, new Milestone("One Week Survived", "You're getting the hang of this!", "GREEN", "GRAY", "entity.experience_orb.pickup"));
+        defaultConfig.milestones.put(10L, new Milestone("Double Digits!", "Day 10 reached.", "GOLD", "YELLOW", "entity.player.levelup"));
+        defaultConfig.milestones.put(100L, new Milestone("Wow, 100-Day Challenge!", "It's time to show off your world!", "AQUA", "GREEN", "ui.toast.challenge_complete"));
+        defaultConfig.milestones.put(365L, new Milestone("HAPPY ANNIVERSARY!", "One entire year in this world.", "LIGHT_PURPLE", "WHITE", "ui.toast.challenge_complete"));
+
+        return defaultConfig;
+    }
 
     public static void save() {
         if (INSTANCE == null) return;
@@ -45,7 +65,7 @@ public class ModConfig {
         File configFile = Paths.get(configDir.toString(), CONFIG_FILE_NAME).toFile();
 
         if (!configFile.exists()) {
-            INSTANCE = new ModConfig();
+            INSTANCE = getDefault();
             save();
             return;
         }
@@ -57,7 +77,7 @@ public class ModConfig {
         }
 
         if (INSTANCE == null) {
-            INSTANCE = new ModConfig();
+            INSTANCE = getDefault();
         }
     }
 
