@@ -27,7 +27,7 @@ screen, showing the current **day** and **in-game time**.
 
 ## Configuration
 
-The mod's configuration file is located at `config/daytimecounter.json`.
+The mod's configuration file is located at `config/daytimecount.json`.
 
 ```json
 {
