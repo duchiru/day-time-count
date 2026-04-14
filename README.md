@@ -32,7 +32,9 @@ The mod's configuration file is located at `config/daytimecounter.json`.
 ```json
 {
   "tracker_style": "default (default | compact | day_only | time_only)",
-  "tracker_position": "top-left (top-left | top-right | bottom-left | bottom-right | hotbar)",
+  "tracker_position": "top_right (top_left | top_right | bottom_left | bottom_right | hotbar)",
+  "tracker_text_color": "#FFFFFF (#RRGGBB or #AARRGGBB)",
+  "tracker_text_scale": "1.0 (0.5 to 3.0)",
   "milestones": {
     "100": {
       "title": "Wow, 100-Day Challenge!",
@@ -44,6 +46,8 @@ The mod's configuration file is located at `config/daytimecounter.json`.
   }
 }
 ```
+
+`tracker_text_color` supports either `#RRGGBB` (alpha defaults to `FF`) or `#AARRGGBB`.
 
 ---
 

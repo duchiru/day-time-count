@@ -22,6 +22,8 @@ public class HudDayTimeTracker implements HudElement {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.world == null || client.options.hudHidden) return;
 
+        ModConfig config = ModConfig.getConfig();
+
         // 1. Calculate days and time
         long timeOfDay = client.world.getTimeOfDay() % 24000;
         long days = client.world.getTimeOfDay() / 24000 + 1; // 1-based days count
@@ -30,47 +32,63 @@ public class HudDayTimeTracker implements HudElement {
         int minutes = (int) ((timeOfDay % 1000) * 60 / 1000);
 
         // 2. Decide how to display time based on style from config
-        TrackerStyle trackerStyle = ModConfig.getConfig().trackerStyle;
+        TrackerStyle trackerStyle = config.trackerStyle;
+        int textColor = config.getTrackerTextColorArgb();
+        float textScale = config.getTrackerTextScale();
         switch (trackerStyle) {
             case DEFAULT -> {
                 String dayString = String.format("Day %d", days);
                 String timeString = String.format("Time %02d:%02d", hours, minutes);
-                renderTwoLines(context, client.textRenderer, ModConfig.getConfig().trackerPosition, dayString, timeString);
+                renderTwoLines(context, client.textRenderer, config.trackerPosition, dayString, timeString, textColor, textScale);
             }
 
             case COMPACT -> {
                 String dayTimeString = String.format("Day %d - %02d:%02d", days, hours, minutes);
-                renderOneLine(context, client.textRenderer, ModConfig.getConfig().trackerPosition, dayTimeString);
+                renderOneLine(context, client.textRenderer, config.trackerPosition, dayTimeString, textColor, textScale);
             }
 
             case DAY_ONLY -> {
                 String dayOnlyString = String.format("Day %d", days);
-                renderOneLine(context, client.textRenderer, ModConfig.getConfig().trackerPosition, dayOnlyString);
+                renderOneLine(context, client.textRenderer, config.trackerPosition, dayOnlyString, textColor, textScale);
             }
 
             case TIME_ONLY -> {
                 String timeOnlyString = String.format("%02d:%02d", hours, minutes);
-                renderOneLine(context, client.textRenderer, ModConfig.getConfig().trackerPosition, timeOnlyString);
+                renderOneLine(context, client.textRenderer, config.trackerPosition, timeOnlyString, textColor, textScale);
             }
         }
     }
 
-    private void renderOneLine(DrawContext context, TextRenderer textRenderer, TrackerPosition position, String line) {
-        int textWidth = textRenderer.getWidth(line);
-
-        RenderPosition renderPos = calculateRenderPosition(context, position, textWidth, LINE_HEIGHT);
-
-        context.drawText(textRenderer, line, renderPos.x, renderPos.y, 0xFFFFFFFF, true);
-    }
-
-    private void renderTwoLines(DrawContext context, TextRenderer textRenderer, TrackerPosition position, String line1, String line2) {
-        int textWidth = Math.max(textRenderer.getWidth(line1), textRenderer.getWidth(line2));
-        int textHeight = LINE_HEIGHT * 2 + GAP;
+    private void renderOneLine(DrawContext context, TextRenderer textRenderer, TrackerPosition position, String line, int textColor, float textScale) {
+        int textWidth = scaleDimension(textRenderer.getWidth(line), textScale);
+        int textHeight = scaleDimension(LINE_HEIGHT, textScale);
 
         RenderPosition renderPos = calculateRenderPosition(context, position, textWidth, textHeight);
 
-        context.drawText(textRenderer, line1, renderPos.x, renderPos.y, 0xFFFFFFFF, true);
-        context.drawText(textRenderer, line2, renderPos.x, renderPos.y + LINE_HEIGHT + GAP, 0xFFFFFFFF, true);
+        drawScaledText(context, textRenderer, line, renderPos.x, renderPos.y, textColor, textScale);
+    }
+
+    private void renderTwoLines(DrawContext context, TextRenderer textRenderer, TrackerPosition position, String line1, String line2, int textColor, float textScale) {
+        int textWidth = Math.max(scaleDimension(textRenderer.getWidth(line1), textScale), scaleDimension(textRenderer.getWidth(line2), textScale));
+        int textHeight = scaleDimension(LINE_HEIGHT * 2 + GAP, textScale);
+
+        RenderPosition renderPos = calculateRenderPosition(context, position, textWidth, textHeight);
+        int secondLineOffset = LINE_HEIGHT + GAP;
+
+        drawScaledText(context, textRenderer, line1, renderPos.x, renderPos.y, textColor, textScale);
+        drawScaledText(context, textRenderer, line2, renderPos.x, renderPos.y + scaleDimension(secondLineOffset, textScale), textColor, textScale);
+    }
+
+    private void drawScaledText(DrawContext context, TextRenderer textRenderer, String text, int x, int y, int color, float scale) {
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate((float) x, (float) y);
+        context.getMatrices().scale(scale, scale);
+        context.drawText(textRenderer, text, 0, 0, color, true);
+        context.getMatrices().popMatrix();
+    }
+
+    private int scaleDimension(int baseValue, float scale) {
+        return Math.max(1, Math.round(baseValue * scale));
     }
 
     private RenderPosition calculateRenderPosition(DrawContext context, TrackerPosition position, int textWidth, int textHeight) {
