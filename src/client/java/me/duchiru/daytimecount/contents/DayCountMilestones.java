@@ -3,19 +3,19 @@ package me.duchiru.daytimecount.contents;
 import me.duchiru.daytimecount.config.Milestone;
 import me.duchiru.daytimecount.config.ModConfig;
 import me.duchiru.daytimecount.events.NewDayCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 
 public class DayCountMilestones implements NewDayCallback {
-    private static Formatting parseFormatting(String colorName, Formatting fallback) {
+    private static ChatFormatting parseFormatting(String colorName, ChatFormatting fallback) {
         if (colorName == null) return fallback;
 
-        Formatting formatting = Formatting.byName(colorName);
+        ChatFormatting formatting = ChatFormatting.getByName(colorName);
         return formatting != null ? formatting : fallback;
     }
 
@@ -25,25 +25,25 @@ public class DayCountMilestones implements NewDayCallback {
         Identifier identifier = Identifier.tryParse(soundId);
         if (identifier == null) return fallback;
 
-        SoundEvent soundEvent = Registries.SOUND_EVENT.get(identifier);
+        SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(identifier);
         return soundEvent != null ? soundEvent : fallback;
     }
 
     @Override
-    public void onNewDay(MinecraftClient client, long days) {
+    public void onNewDay(Minecraft client, long days) {
         if (client.player == null || ModConfig.getConfig() == null || ModConfig.getConfig().milestones == null) return;
 
         long triggerDay = days + 1;
         Milestone milestone = ModConfig.getConfig().milestones.get(triggerDay);
         if (milestone == null) return;
 
-        Formatting titleFormatting = parseFormatting(milestone.titleColor, Formatting.WHITE);
-        Formatting subtitleFormatting = parseFormatting(milestone.subtitleColor, Formatting.GRAY);
-        SoundEvent sound = parseSound(milestone.sound, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP);
+        ChatFormatting titleFormatting = parseFormatting(milestone.titleColor, ChatFormatting.WHITE);
+        ChatFormatting subtitleFormatting = parseFormatting(milestone.subtitleColor, ChatFormatting.GRAY);
+        SoundEvent sound = parseSound(milestone.sound, SoundEvents.EXPERIENCE_ORB_PICKUP);
 
-        client.inGameHud.setTitleTicks(10, 60, 20);
-        client.inGameHud.setTitle(Text.literal(milestone.title).formatted(titleFormatting));
-        client.inGameHud.setSubtitle(Text.literal(milestone.subtitle).formatted(subtitleFormatting));
+        client.gui.setTimes(10, 60, 20);
+        client.gui.setTitle(Component.literal(milestone.title).withStyle(titleFormatting));
+        client.gui.setSubtitle(Component.literal(milestone.subtitle).withStyle(subtitleFormatting));
         client.player.playSound(sound, 1.0f, 1.0f);
     }
 }

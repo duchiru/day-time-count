@@ -4,10 +4,10 @@ import me.duchiru.daytimecount.config.ModConfig;
 import me.duchiru.daytimecount.config.TrackerPosition;
 import me.duchiru.daytimecount.config.TrackerStyle;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.NonNull;
 
 public class HudDayTimeTracker implements HudElement {
@@ -18,15 +18,15 @@ public class HudDayTimeTracker implements HudElement {
     private static final int HOTBAR_HEIGHT = 46;
 
     @Override
-    public void render(@NonNull DrawContext context, @NonNull RenderTickCounter tickCounter) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.world == null || client.options.hudHidden) return;
+    public void extractRenderState(@NonNull GuiGraphicsExtractor gui, @NonNull DeltaTracker deltaTracker) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null || client.options.hideGui) return;
 
         ModConfig config = ModConfig.getConfig();
 
         // 1. Calculate days and time
-        long timeOfDay = client.world.getTimeOfDay() % 24000;
-        long days = client.world.getTimeOfDay() / 24000 + 1; // 1-based days count
+        long timeOfDay = client.level.getOverworldClockTime() % 24000;
+        long days = client.level.getOverworldClockTime() / 24000 + 1; // 1-based days count
 
         int hours = (int) ((timeOfDay / 1000 + 6) % 24);
         int minutes = (int) ((timeOfDay % 1000) * 60 / 1000);
@@ -39,61 +39,61 @@ public class HudDayTimeTracker implements HudElement {
             case DEFAULT -> {
                 String dayString = String.format("Day %d", days);
                 String timeString = String.format("Time %02d:%02d", hours, minutes);
-                renderTwoLines(context, client.textRenderer, config.trackerPosition, dayString, timeString, textColor, textScale);
+                renderTwoLines(gui, client.font, config.trackerPosition, dayString, timeString, textColor, textScale);
             }
 
             case COMPACT -> {
                 String dayTimeString = String.format("Day %d - %02d:%02d", days, hours, minutes);
-                renderOneLine(context, client.textRenderer, config.trackerPosition, dayTimeString, textColor, textScale);
+                renderOneLine(gui, client.font, config.trackerPosition, dayTimeString, textColor, textScale);
             }
 
             case DAY_ONLY -> {
                 String dayOnlyString = String.format("Day %d", days);
-                renderOneLine(context, client.textRenderer, config.trackerPosition, dayOnlyString, textColor, textScale);
+                renderOneLine(gui, client.font, config.trackerPosition, dayOnlyString, textColor, textScale);
             }
 
             case TIME_ONLY -> {
                 String timeOnlyString = String.format("%02d:%02d", hours, minutes);
-                renderOneLine(context, client.textRenderer, config.trackerPosition, timeOnlyString, textColor, textScale);
+                renderOneLine(gui, client.font, config.trackerPosition, timeOnlyString, textColor, textScale);
             }
         }
     }
 
-    private void renderOneLine(DrawContext context, TextRenderer textRenderer, TrackerPosition position, String line, int textColor, float textScale) {
-        int textWidth = scaleDimension(textRenderer.getWidth(line), textScale);
+    private void renderOneLine(GuiGraphicsExtractor gui, Font font, TrackerPosition position, String line, int textColor, float textScale) {
+        int textWidth = scaleDimension(font.width(line), textScale);
         int textHeight = scaleDimension(LINE_HEIGHT, textScale);
 
-        RenderPosition renderPos = calculateRenderPosition(context, position, textWidth, textHeight);
+        RenderPosition renderPos = calculateRenderPosition(gui, position, textWidth, textHeight);
 
-        drawScaledText(context, textRenderer, line, renderPos.x, renderPos.y, textColor, textScale);
+        drawScaledText(gui, font, line, renderPos.x, renderPos.y, textColor, textScale);
     }
 
-    private void renderTwoLines(DrawContext context, TextRenderer textRenderer, TrackerPosition position, String line1, String line2, int textColor, float textScale) {
-        int textWidth = Math.max(scaleDimension(textRenderer.getWidth(line1), textScale), scaleDimension(textRenderer.getWidth(line2), textScale));
+    private void renderTwoLines(GuiGraphicsExtractor gui, Font font, TrackerPosition position, String line1, String line2, int textColor, float textScale) {
+        int textWidth = Math.max(scaleDimension(font.width(line1), textScale), scaleDimension(font.width(line2), textScale));
         int textHeight = scaleDimension(LINE_HEIGHT * 2 + GAP, textScale);
 
-        RenderPosition renderPos = calculateRenderPosition(context, position, textWidth, textHeight);
+        RenderPosition renderPos = calculateRenderPosition(gui, position, textWidth, textHeight);
         int secondLineOffset = LINE_HEIGHT + GAP;
 
-        drawScaledText(context, textRenderer, line1, renderPos.x, renderPos.y, textColor, textScale);
-        drawScaledText(context, textRenderer, line2, renderPos.x, renderPos.y + scaleDimension(secondLineOffset, textScale), textColor, textScale);
+        drawScaledText(gui, font, line1, renderPos.x, renderPos.y, textColor, textScale);
+        drawScaledText(gui, font, line2, renderPos.x, renderPos.y + scaleDimension(secondLineOffset, textScale), textColor, textScale);
     }
 
-    private void drawScaledText(DrawContext context, TextRenderer textRenderer, String text, int x, int y, int color, float scale) {
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate((float) x, (float) y);
-        context.getMatrices().scale(scale, scale);
-        context.drawText(textRenderer, text, 0, 0, color, true);
-        context.getMatrices().popMatrix();
+    private void drawScaledText(GuiGraphicsExtractor gui, Font font, String text, int x, int y, int color, float scale) {
+        gui.pose().pushMatrix();
+        gui.pose().translate((float) x, (float) y);
+        gui.pose().scale(scale, scale);
+        gui.text(font, text, 0, 0, color, true);
+        gui.pose().popMatrix();
     }
 
     private int scaleDimension(int baseValue, float scale) {
         return Math.max(1, Math.round(baseValue * scale));
     }
 
-    private RenderPosition calculateRenderPosition(DrawContext context, TrackerPosition position, int textWidth, int textHeight) {
-        int screenWidth = context.getScaledWindowWidth();
-        int screenHeight = context.getScaledWindowHeight();
+    private RenderPosition calculateRenderPosition(GuiGraphicsExtractor gui, TrackerPosition position, int textWidth, int textHeight) {
+        int screenWidth = gui.guiWidth();
+        int screenHeight = gui.guiHeight();
 
         int rightAlignedX = Math.max(PADDING_X, screenWidth - PADDING_X - textWidth);
         int bottomAlignedY = Math.max(PADDING_Y, screenHeight - PADDING_Y - textHeight);
