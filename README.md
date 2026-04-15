@@ -21,7 +21,7 @@ screen, showing the current **day** and **in-game time**.
 
 ## Requirements
 
-* Fabric API 0.135.1 or higher
+* Fabric API 0.145.4 or higher
 
 ---
 
