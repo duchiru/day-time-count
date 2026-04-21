@@ -40,7 +40,7 @@ public class ModConfig {
         ModConfig defaultConfig = new ModConfig();
 
         defaultConfig.trackerStyle = TrackerStyle.DEFAULT;
-        defaultConfig.trackerPosition = TrackerPosition.TOP_RIGHT;
+        defaultConfig.trackerPosition = TrackerPosition.TOP_LEFT;
         defaultConfig.trackerTextColor = DEFAULT_TRACKER_TEXT_COLOR;
         defaultConfig.trackerTextScale = DEFAULT_TRACKER_TEXT_SCALE;
         defaultConfig.milestones = new TreeMap<>();
